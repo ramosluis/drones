@@ -17,8 +17,10 @@ from bokeh.models import (
   DataRange1d, 
   PanTool, 
   WheelZoomTool, 
-  BoxSelectTool,
-  HoverTool
+  BoxZoomTool,
+  HoverTool,
+  ResizeTool,
+  ResetTool,
 )
 
 # para el HoverTool
@@ -32,7 +34,7 @@ from collections import OrderedDict
 
 # seleccionar shapefile que se va a analizar
 shapefile = "C:/Users/Luis/Documents/xantronic/agricultura/vuelos/vuelo_3_25m/vuelo_3_25m/4_index/indices/ndvi/vuelo_3_25m_index_ndvi.shp"
-
+#shapefile = "C:/Users/Luis/Documents/xantronic/agricultura/vuelos/test/4_index/indices/ndvi/test_index_ndvi.shp"
 # variables para guardar la informacion
 ndvi = []
 coords_utm = []
@@ -102,12 +104,14 @@ map_options = GMapOptions(lat=latitud[0], lng=longitud[0], map_type="terrain", z
 plot = GMapPlot(
     x_range=DataRange1d(), y_range=DataRange1d(), map_options=map_options,
     api_key=API_KEY,
+    webgl=True,
+    lod_threshold=1000,
 )
 
 plot.title.text = "NDVI"
 
 # herramientas que habilitamos en el mapa para agregar interactividad
-plot.add_tools(PanTool(), WheelZoomTool(), BoxSelectTool(), HoverTool())
+plot.add_tools(PanTool(), WheelZoomTool(), HoverTool())
 
 # la fuente de los datos de nuestra gráfica
 source = ColumnDataSource(
@@ -120,7 +124,7 @@ source = ColumnDataSource(
 
 # cada valor será representado por un círculo azul
 # TODO: cambiar el color del círculo dependiendo del valor de NDVI
-circle = Circle(x="x", y="y", size=5, fill_color="blue", fill_alpha=0.8, line_color=None)
+circle = Circle(x="x", y="y", size=8, fill_color="blue", fill_alpha=0.8, line_color=None)
 
 # generar gráfica
 plot.add_glyph(source, circle)
@@ -129,12 +133,12 @@ hover = plot.select(dict(type=HoverTool))
 
 # aqui seleccionamos qué tooltips queremos que salgan al hacer hover en un punto
 hover.tooltips = OrderedDict([
-    ("Indice", "$index"),
-    ("(x,y)", "(@x, @y)"),
     ("NDVI", "@indice"),
+    ("(x,y)", "(@x, @y)"),
 ])
 
 # guardamos la gráfica como un html para visualizarlo en cualquier navegador
 output_file("gmap_plot.html")
+#output_file("test_plot.html")
 show(plot)
 
