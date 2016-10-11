@@ -36,7 +36,6 @@ coords_utm = []
 coords = []
 latitud = []
 longitud = []
-esquinas = []
 
 # abrimos shapefile y guardamos informacion de NDVI y de coordenadas
 driver = ogr.GetDriverByName("ESRI Shapefile")
@@ -104,16 +103,24 @@ plot.title.text = "NDVI"
 
 source = ColumnDataSource(
     data=dict(
-        lat=latitud,
-        lon=longitud,
-        ndvi=ndvi
+        x=longitud,
+        y=latitud,
+        indice=ndvi
     )
 )
+    
+hover = HoverTool(
+        tooltips=[
+            ("index", "$index"),
+            ("(x,y)", "($x, $y)"),
+            ("NDVI", "@ndvi"),
+        ]
+    )
 
-circle = Circle(x="lon", y="lat", size=5, fill_color="blue", fill_alpha=0.8, line_color=None)
+circle = Circle(x="x", y="y", size=5, fill_color="blue", fill_alpha=0.8, line_color=None)
 plot.add_glyph(source, circle)
 
-plot.add_tools(PanTool(), WheelZoomTool(), BoxSelectTool())
+plot.add_tools(PanTool(), WheelZoomTool(), BoxSelectTool(), HoverTool())
 
 output_file("gmap_plot.html")
 show(plot)
