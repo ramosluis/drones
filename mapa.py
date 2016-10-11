@@ -21,6 +21,9 @@ from bokeh.models import (
   HoverTool
 )
 
+# para el HoverTool
+from collections import OrderedDict
+
 ###################################
 ###################################
 #### PREPARACION DE INFORMACION ###
@@ -94,6 +97,8 @@ API_KEY = "AIzaSyAIKNV7XZFPkFZFPGeNnnKHfoYwAegTIB0"
 # property type: map_type:Enum(‘satellite’, ‘roadmap’, ‘terrain’, ‘hybrid’)
 map_options = GMapOptions(lat=latitud[0], lng=longitud[0], map_type="terrain", zoom=16)
 
+# para graficar los valores de NDVI/Coordenadas se usa un tipo de plot especial 
+# que usa Google Maps de fondo
 plot = GMapPlot(
     x_range=DataRange1d(), y_range=DataRange1d(), map_options=map_options,
     api_key=API_KEY,
@@ -101,6 +106,10 @@ plot = GMapPlot(
 
 plot.title.text = "NDVI"
 
+# herramientas que habilitamos en el mapa para agregar interactividad
+plot.add_tools(PanTool(), WheelZoomTool(), BoxSelectTool(), HoverTool())
+
+# la fuente de los datos de nuestra gráfica
 source = ColumnDataSource(
     data=dict(
         x=longitud,
@@ -108,19 +117,24 @@ source = ColumnDataSource(
         indice=ndvi
     )
 )
-    
-hover = HoverTool(
-        tooltips=[
-            ("index", "$index"),
-            ("(x,y)", "($x, $y)"),
-            ("NDVI", "@ndvi"),
-        ]
-    )
 
+# cada valor será representado por un círculo azul
+# TODO: cambiar el color del círculo dependiendo del valor de NDVI
 circle = Circle(x="x", y="y", size=5, fill_color="blue", fill_alpha=0.8, line_color=None)
+
+# generar gráfica
 plot.add_glyph(source, circle)
 
-plot.add_tools(PanTool(), WheelZoomTool(), BoxSelectTool(), HoverTool())
+hover = plot.select(dict(type=HoverTool))
 
+# aqui seleccionamos qué tooltips queremos que salgan al hacer hover en un punto
+hover.tooltips = OrderedDict([
+    ("Indice", "$index"),
+    ("(x,y)", "(@x, @y)"),
+    ("NDVI", "@indice"),
+])
+
+# guardamos la gráfica como un html para visualizarlo en cualquier navegador
 output_file("gmap_plot.html")
 show(plot)
+
