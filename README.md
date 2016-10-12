@@ -1,10 +1,10 @@
-# drones
-Scripts de python para proyecto de drones en agricultura.
+# Drones
+Scripts de python y Arduino para proyecto de drones en agricultura
 
 
-## Dependencias
+## Dependencias mapas.py
 
-Estos scripts fueron hechos en Python 3.4 con el paquete de Python Científico [Anaconda](https://www.continuum.io/downloads "Anaconda").
+Este script fue hecho en Python 3.4 con el paquete de Python Científico [Anaconda](https://www.continuum.io/downloads "Anaconda").
 Para el script de **mapas** es necesario descargar algunos módulos, si se usa Anaconda es fácil pues el mismo package manager se encarga de descargar dependencias, sólo es necesario correr lo siguiente:
 
 * `conda install gdal`
@@ -20,3 +20,7 @@ Si se usa pip se necesita instalar los mismos paquetes y la forma de hacerlo es 
 * `pip install [paquete]`
 
 La única diferencia es que pip no instala dependencias entonces hay que leer con cuidado la documentación de los paquetes [bokeh](http://bokeh.pydata.org/en/latest/docs/installation.html "bokeh"), [matplotlib](http://matplotlib.org/ "matplotlib"), [numpy](http://www.numpy.org/ "numpy") y [UTM](https://pypi.python.org/pypi/utm "UTM").
+
+## Arduino
+
+Se usó un Arduino MEGA 2560 para hacer las pruebas con LiDar, GPS, Motor Brushless + Tarjeta MicroSD.
