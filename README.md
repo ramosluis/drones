@@ -5,7 +5,7 @@ Scripts de python para proyecto de drones en agricultura.
 ## Dependencias
 
 Estos scripts fueron hechos en Python 3.4 con el paquete de Python Científico [Anaconda](https://www.continuum.io/downloads "Anaconda").
-Para el script de **Strong** __mapas__ es necesario descargar algunos módulos, si se usa Anaconda es fácil pues el mismo package manager se encarga de descargar dependencias, sólo es necesario correr lo siguiente:
+Para el script de **mapas** es necesario descargar algunos módulos, si se usa Anaconda es fácil pues el mismo package manager se encarga de descargar dependencias, sólo es necesario correr lo siguiente:
 
 * `conda install gdal`
 * `conda install numpy`
