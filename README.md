@@ -19,7 +19,7 @@ Si se usa pip se necesita instalar los mismos paquetes y la forma de hacerlo es 
 
 * `pip install [paquete]`
 
-La única diferencia es que pip no instala dependencias entonces hay que leer con cuidado la documentación de los paquetes [bokeh](http://bokeh.pydata.org/en/latest/docs/installation.html "bokeh"), [matplotlib](http://matplotlib.org/ "matplotlib"), [numpy](http://www.numpy.org/ "numpy") y [UTM](https://pypi.python.org/pypi/utm "UTM").
+La única diferencia es que pip no instala dependencias entonces hay que leer con cuidado la documentación de los paquetes [gdal](https://pypi.python.org/pypi/GDAL/ "gdal"), [bokeh](http://bokeh.pydata.org/en/latest/docs/installation.html "bokeh"), [matplotlib](http://matplotlib.org/ "matplotlib"), [numpy](http://www.numpy.org/ "numpy") y [UTM](https://pypi.python.org/pypi/utm "UTM").
 
 ## Arduino
 
