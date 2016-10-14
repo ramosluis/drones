@@ -53,33 +53,24 @@ void setup()
   // inicializar la tarjeta
   SD.begin(chipSelect);
 
-  Serial.begin(terminal_baud_rate);                                     // Abre el puerto serial USB en el Arduino para la aplicación
+  // Serial.begin(terminal_baud_rate);                                     // Abre el puerto serial USB en el Arduino para la aplicación
   Serial1.begin(sf30_baud_rate);                                        // Abre el segundo puerto serial para conectarse al sf30
 }
 
 void loop()
-{  
+{
   Serial1.available();
+  esc.writeMicroseconds(1370);                                // manda el pulso al ESC
    while (Serial1.available() > 0)                                 // Espera a que llegue el siguiente caracter
   {
     Byte_H = Serial1.read();                                        // Guarda el byte en Byte_H
     Byte_L = Serial1.read();                                        // Guarda el byte en Byte_L
-    distance = (float(Byte_L))/256 + Byte_H;                            // Toma la distancia de los bytes
-    Serial.print("Distancia en metros = ");                              
-    Serial.println(distance, 2);                                        // Imprime la distancia a dos decimales y se va a una línea nueva
-    //delay(10);                                                          // Pausa 0.1 segundos
-    
-    esc.writeMicroseconds(1370);                                // manda el pulso al ESC
+
     // abrir el archivo, notar que solo se puede abrir un archivo a la vez,
     // si se quiere abrir otro hay que cerrar este primero.
     File dataFile = SD.open("datalog.txt", FILE_WRITE);
-
-    // si el archivo esta disponible, escribirle:
-    if (dataFile) 
-    {
-      dataFile.println(String(distance));
-      dataFile.close();
-    }
+    dataFile.println(String(Byte_H) + "," + String(Byte_L));
+    dataFile.close();
 
     Serial1.available();                                            // Checa el buffer si hay bytes disponibles
   }
