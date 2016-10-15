@@ -13,7 +13,7 @@ Para el script de **mapas** es necesario descargar algunos módulos, si se usa A
 * `conda install matplotlib`
 * `conda install utm`
 
-Hay que notar que es posible no necesitar instalar matplotlib y numpy si se instala bokeh con Anaconda ya que se encargará de instalarlos si no los encuentra.
+Hay que notar que es posible no necesitar instalar matplotlib y numpy si se instala bokeh con Anaconda ya que se encargará de instalarlos si no los encuentra. Adicionalmente, puede que algunos de los paquetes no esten en los repositorios de Anaconda, caso en el cual se deben instalar con **pip**, el cual viene instalado junto a Anaconda.
 
 Si se usa pip se necesita instalar los mismos paquetes y la forma de hacerlo es muy similar:
 
@@ -23,4 +23,4 @@ La única diferencia es que pip no instala dependencias entonces hay que leer co
 
 ## Arduino
 
-Se usó un Arduino MEGA 2560 para hacer las pruebas con LiDar, GPS, Motor Brushless + Tarjeta MicroSD.
+Se usó un Arduino MEGA 2560 para hacer las pruebas con LiDar, GPS, Motor Brushless + Tarjeta MicroSD. Los diagramas de conexiones vienen incluidas en el código.
