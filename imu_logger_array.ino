@@ -56,8 +56,6 @@ void dmpDataReady() {
     mpuInterrupt = true;
 }
 
-
-//String dataString[512];
 int count = 0;
 // ================================================================
 // ===                      INITIAL SETUP                       ===
@@ -82,7 +80,7 @@ void setup() {
     // initialize serial communication
     // (115200 chosen because it is required for Teapot Demo output, but it's
     // really up to you depending on your project)
-    Serial.begin(115200);
+    //Serial.begin(115200);
     //while (!Serial); // wait for Leonardo enumeration, others continue immediately
 
     // NOTE: 8MHz or slower host processors, like the Teensy @ 3.3v or Ardunio
@@ -110,10 +108,12 @@ void setup() {
     devStatus = mpu.dmpInitialize();
 
     // supply your own gyro offsets here, scaled for min sensitivity
-    mpu.setXGyroOffset(220);
-    mpu.setYGyroOffset(76);
-    mpu.setZGyroOffset(-85);
-    mpu.setZAccelOffset(1788); // 1688 factory default for my test chip
+    mpu.setXAccelOffset(106);
+    mpu.setYAccelOffset(892);
+    mpu.setZAccelOffset(1283);
+    mpu.setXGyroOffset(29);
+    mpu.setYGyroOffset(0);
+    mpu.setZGyroOffset(99);
 
     // make sure it worked (returns 0 if so)
     if (devStatus == 0) {
@@ -144,7 +144,7 @@ void setup() {
 
     // configure LED for output
     pinMode(LED_PIN, OUTPUT);
-    dataFile = SD.open("imu5.txt", FILE_WRITE);
+    dataFile = SD.open("imu13.txt", FILE_WRITE);
 }
 
 
@@ -173,7 +173,7 @@ void loop() {
     if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
         // reset so we can continue cleanly
         mpu.resetFIFO();
-        Serial.println(F("FIFO overflow!"));
+        //Serial.println(F("FIFO overflow!"));
 
     // otherwise, check for DMP data ready interrupt (this should happen frequently)
     } else if (mpuIntStatus & 0x02) {
@@ -193,17 +193,14 @@ void loop() {
        mpu.dmpGetGravity(&gravity, &q);
        mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
 
-        dataFile.println(ypr[0]*180/M_PI);
+        dataFile.println(ypr[0]);
         count++;
-        Serial.print(ypr[0]*180/M_PI);
-        Serial.print("\t\t");
-        Serial.println(count);
-        
-       //mpu.resetFIFO();
 
-       if (count >= 256)
+       if (count >= 511)
        {
           dataFile.flush();
+          delay(10);
+          mpu.resetFIFO();
           count = 0;
        }  
        // blink LED to indicate activity
