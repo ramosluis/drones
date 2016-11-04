@@ -57,7 +57,7 @@ void dmpDataReady() {
 }
 
 
-String dataString[512];
+//String dataString[512];
 int count = 0;
 // ================================================================
 // ===                      INITIAL SETUP                       ===
@@ -82,7 +82,7 @@ void setup() {
     // initialize serial communication
     // (115200 chosen because it is required for Teapot Demo output, but it's
     // really up to you depending on your project)
-    //Serial.begin(115200);
+    Serial.begin(115200);
     //while (!Serial); // wait for Leonardo enumeration, others continue immediately
 
     // NOTE: 8MHz or slower host processors, like the Teensy @ 3.3v or Ardunio
@@ -144,7 +144,7 @@ void setup() {
 
     // configure LED for output
     pinMode(LED_PIN, OUTPUT);
-    dataFile = SD.open("imu3.txt", FILE_WRITE);
+    dataFile = SD.open("imu5.txt", FILE_WRITE);
 }
 
 
@@ -192,24 +192,20 @@ void loop() {
        mpu.dmpGetQuaternion(&q, fifoBuffer);
        mpu.dmpGetGravity(&gravity, &q);
        mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-//       Serial.print("yaw\t");
-//       Serial.print(ypr[0] * 180/M_PI);
-//       Serial.print("\t count = ");
-//       Serial.println(count);
-       dataString[count] = String(ypr[0]*180/M_PI);
-       count++;
 
-       if (count >= 511)
+        dataFile.println(ypr[0]*180/M_PI);
+        count++;
+        Serial.print(ypr[0]*180/M_PI);
+        Serial.print("\t\t");
+        Serial.println(count);
+        
+       //mpu.resetFIFO();
+
+       if (count >= 256)
        {
-          for(int i = 0; i <= 511; i++)
-            dataFile.println(dataString[i]);
           dataFile.flush();
           count = 0;
-       }
-       
-//       dataFile.println(ypr[0]*180/M_PI);
-//       dataFile.flush();
-       mpu.resetFIFO();
+       }  
        // blink LED to indicate activity
        blinkState = !blinkState;
        digitalWrite(LED_PIN, blinkState);
