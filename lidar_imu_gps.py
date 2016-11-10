@@ -1,19 +1,19 @@
 import serial
 import time
 import csv
-import pigpio
+#import pigpio
 from time import sleep
 
 
-pi = pigpio.pi()
+#pi = pigpio.pi()
 
-pi.set_servo_pulsewidth(17,0)
-sleep(2)
+#pi.set_servo_pulsewidth(17,0)
+#sleep(2)
 
-pi.set_servo_pulsewidth(17,1000)
-sleep(10)
+#pi.set_servo_pulsewidth(17,1000)
+#sleep(10)
 
-pi.set_servo_pulsewidth(17, 1350)
+#pi.set_servo_pulsewidth(17, 1350)
 
 #variable para tomar la fecha y hora del tiempo del logger
 timestr = time.strftime("%Y_%m_%d-%H_%M_%S")
