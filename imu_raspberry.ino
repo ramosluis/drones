@@ -144,7 +144,9 @@ void setup() {
     pinMode(LED_PIN, OUTPUT);
     esc.attach(esc_pin);
     esc.writeMicroseconds(1000);                                          // manda señal para activar ESC
-    delay(10000);                                                         // delay que nos permite encender todo el equipo antes de iniciar
+    // Wait for input
+    while (!Serial.available());
+    Serial.read();
     esc.writeMicroseconds(1370); 
 }
 
@@ -215,5 +217,6 @@ void loop() {
         // blink LED to indicate activity
         blinkState = !blinkState;
         digitalWrite(LED_PIN, blinkState);
+        mpu.resetFIFO();
     }
 }
