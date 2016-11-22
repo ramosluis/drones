@@ -57,13 +57,13 @@ if __name__ == '__main__':
 	data = []
 
 	t1 = Thread(target = gps_read)
-    t2 = Thread(target = lidar_read)
-    t3 = Thread(target = imprimir)
-    t1.setDaemon(True)
-    t2.setDaemon(True)
-    t3.setDaemon(True)
-    t1.start()
-    t2.start()
-    t3.start()
-    while True:
-        pass
+    	t2 = Thread(target = lidar_read)
+    	t3 = Thread(target = imprimir)
+    	t1.setDaemon(True)
+    	t2.setDaemon(True)
+    	t3.setDaemon(True)
+    	t1.start()
+    	t2.start()
+    	t3.start()
+    	while True:
+        	pass
