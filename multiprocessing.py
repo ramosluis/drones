@@ -63,7 +63,9 @@ def writeFile(lidar, gps, imu):
 		data.append(lidar.get())
 		data.append(imu.get())
 		data.append(gps.get())
+		pi.write(23, 1)
 		dataWriter.writerow([data])
+		pi.write(23, 0)
 		data[:] = []
 
 
@@ -76,6 +78,9 @@ if __name__ == '__main__':
 
 	# get expected DMP packet size for later comparison
 	packetSize = mpu.dmpGetFIFOPacketSize() 
+
+	# objeto para manipular GPIO del Pi
+	pi = pigpio.pi()
 
 	#variable para tomar la fecha y hora del tiempo del logger
 	timestr = time.strftime("%Y_%m_%d-%H_%M_%S")
