@@ -1540,7 +1540,83 @@ class MPU6050:
             'roll' : atan(g['y'] / sqrt(g['x'] * g['x'] + g['z'] * g['z']))}
             
         return data 
+        
+    def getQX(self, packet):
+        # We are dealing with signed bytes
+        if packet[0] > 127:
+            packet[0] -= 256
 
+        if packet[4] > 127:
+            packet[4] -= 256
+            
+        if packet[8] > 127:
+            packet[8] -= 256            
+          
+        if packet[12] > 127:
+            packet[12] -= 256          
+
+        qx = ((packet[4] << 8) + packet[5]) / 16384.0
+        
+        return qx
+
+    def getQY(self, packet):
+        # We are dealing with signed bytes
+        if packet[0] > 127:
+            packet[0] -= 256
+
+        if packet[4] > 127:
+            packet[4] -= 256
+            
+        if packet[8] > 127:
+            packet[8] -= 256            
+          
+        if packet[12] > 127:
+            packet[12] -= 256          
+
+        qy = ((packet[8] << 8) + packet[9]) / 16384.0
+        
+        return qy
+
+    def getQZ(self, packet):
+        # We are dealing with signed bytes
+        if packet[0] > 127:
+            packet[0] -= 256
+
+        if packet[4] > 127:
+            packet[4] -= 256
+            
+        if packet[8] > 127:
+            packet[8] -= 256            
+          
+        if packet[12] > 127:
+            packet[12] -= 256          
+
+        qz = ((packet[12] << 8) + packet[13]) / 16384.0
+        
+        return qz
+
+    def getQW(self, packet):
+        # We are dealing with signed bytes
+        if packet[0] > 127:
+            packet[0] -= 256
+
+        if packet[4] > 127:
+            packet[4] -= 256
+            
+        if packet[8] > 127:
+            packet[8] -= 256            
+          
+        if packet[12] > 127:
+            packet[12] -= 256          
+
+        qw = ((packet[0] << 8) + packet[1]) / 16384.0
+        
+        return qw
+
+    def dmpGetYaw(self, qx, qy, qw, qz):
+        yaw = atan2(2 * qx * qy - 2 * qw * qz, 2 * qw * qw + 2 * qx * qx - 1)
+        return yaw
+        
     def dmpProcessFIFOPacket(self):
         pass
         
