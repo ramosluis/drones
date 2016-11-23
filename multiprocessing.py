@@ -44,8 +44,7 @@ def imuRead():
 			ypr = mpu.dmpGetYawPitchRoll(q, g)
 			y = ypr['yaw']
 			print y
-
-			dataWriter.writerow([y])
+			
 			# ver cuenta del FIFO aqui, en caso de tener mas de 1
 			# esto nos permite leer mas sin esperar un interrupt        
 			fifoCount -= packetSize
