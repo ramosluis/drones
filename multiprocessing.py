@@ -1,4 +1,5 @@
-from multiprocessing import Process
+import multiprocessing
+from multiprocessing import Process, Queue
 from time import sleep
 import serial
 import time
@@ -7,24 +8,18 @@ import mpu6050
 import csv
 import pigpio
 
-def gpsRead():
-	#creamos csv
-	gpsFile = open('/home/pi/datalog/'+timestr+'_GPS'+'.csv', 'w')
-	gpsWriter = csv.writer(gpsFile)
+def gpsRead(q):
 	while 1:
-		gpsWriter.writerow([gps.readline()])
+		q.put([gps.readline()])
 
-def lidarRead():
-	lidarFile = open('/home/pi/datalog/'+timestr+'_LIDAR'+'.csv', 'w')
-	lidarWriter = csv.writer(lidarFile)
+def lidarRead(q):
 	while 1:
-		#byte_l = ord(lidar.read(1))
-		#byte_h = ord(lidar.read(1))
-		lidarWriter.writerow([ord(lidar.read(1)), ord(lidar.read(1))])
+		byte_l = ord(lidar.read(1))
+		byte_h = ord(lidar.read(1))
+		#print [byte_h, byte_l]
+		q.put([byte_h, byte_l])
 
-def imuRead():
-	imuFile = open('/home/pi/datalog/'+timestr+'_IMU'+'.csv', 'w')
-	imuWriter = csv.writer(imuFile)
+def imuRead(q):
 	while 1:
 		# tomar valor de INT_STATUS
 		mpuIntStatus = mpu.getIntStatus()
@@ -46,15 +41,32 @@ def imuRead():
 				fifoCount = mpu.getFIFOCount()
 		
 			result = mpu.getFIFOBytes(packetSize)
-			q = mpu.dmpGetQuaternion(result)
-			g = mpu.dmpGetGravity(q)
-			ypr = mpu.dmpGetYawPitchRoll(q, g)
-			#y = ypr['yaw']
-			imuWriter.writerow([ypr['yaw']])
-			
+			qx = mpu.getQX(result)
+			qy = mpu.getQY(result)
+			qz = mpu.getQZ(result)
+			qw = mpu.getQW(result)
+        #g = mpu.dmpGetGravity(q)
+			y = mpu.dmpGetYaw(qx, qy, qw, qz)
+			#print y
+			q.put(y)
+
 			# ver cuenta del FIFO aqui, en caso de tener mas de 1
 			# esto nos permite leer mas sin esperar un interrupt        
 			fifoCount -= packetSize
+
+
+def writeFile(lidar, gps, imu):
+	dataFile = open('/home/pi/datalog/'+timestr+'.csv', 'w')
+	dataWriter = csv.writer(dataFile)
+	data = []
+	while 1:
+		data.append(lidar.get())
+		data.append(imu.get())
+		data.append(gps.get())
+		dataWriter.writerow([data])
+		data[:] = []
+
+
 
 if __name__ == '__main__':
 	# inicializacion de IMU
@@ -67,6 +79,10 @@ if __name__ == '__main__':
 
 	#variable para tomar la fecha y hora del tiempo del logger
 	timestr = time.strftime("%Y_%m_%d-%H_%M_%S")
+
+	gpsQueue = multiprocessing.Queue()
+	lidarQueue = multiprocessing.Queue()
+	imuQueue = multiprocessing.Queue()
 
 	gps = serial.Serial(port='/dev/gps',
 					baudrate=57600,
@@ -85,6 +101,7 @@ if __name__ == '__main__':
 	lidar.close()
 	lidar.open()
 	
-	Process(target=gpsRead).start()
-	Process(target=lidarRead).start()
-	Process(target=imuRead).start()
+	Process(target=gpsRead, args=(gpsQueue,)).start()
+	Process(target=lidarRead, args=(lidarQueue,)).start()
+	Process(target=imuRead, args=(imuQueue,)).start()
+	Process(target=writeFile, args=(lidarQueue, gpsQueue, imuQueue,)).start()
