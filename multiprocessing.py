@@ -51,6 +51,31 @@ def imuRead():
 			fifoCount -= packetSize
 
 if __name__ == '__main__':
+	# inicializacion de IMU
+	mpu = mpu6050.MPU6050()
+	mpu.dmpInitialize()
+	mpu.setDMPEnabled(True)
+
+	# get expected DMP packet size for later comparison
+	packetSize = mpu.dmpGetFIFOPacketSize() 
+
+	gps = serial.Serial(port='/dev/gps',
+					baudrate=57600,
+					parity=serial.PARITY_NONE,
+					stopbits=serial.STOPBITS_ONE,
+					bytesize=serial.EIGHTBITS,
+					timeout = 1)
+
+	lidar = serial.Serial('/dev/ttyAMA0', 
+						baudrate = 115200,
+						bytesize = serial.EIGHTBITS,
+						parity = serial.PARITY_NONE,
+						stopbits = serial.STOPBITS_ONE)
+	# si no se hace esto el lidar no jala a menos que se cierre el programa y se vuelva a correr
+	# because f logic
+	lidar.close()
+	lidar.open()
+	
 	Process(target=gpsRead).start()
 	Process(target=lidarRead).start()
 	Process(target=imuRead).start()
