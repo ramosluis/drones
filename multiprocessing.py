@@ -8,20 +8,27 @@ import csv
 import pigpio
 
 def gpsRead():
+	#creamos csv
+	gpsFile = open('/home/pi/datalog/'+timestr+'_GPS'+'.csv', 'w')
+	gpsWriter = csv.writer(gpsFile)
 	while 1:
-		print gps.readline()
+		gpsWriter.writerow([gps.readline()])
 
 def lidarRead():
+	lidarFile = open('/home/pi/datalog/'+timestr+'_LIDAR'+'.csv', 'w')
+	lidarWriter = csv.writer(lidarFile)
 	while 1:
-		byte_l = ord(lidar.read(1))
-		byte_h = ord(lidar.read(1))
-		print [byte_h, byte_l]
+		#byte_l = ord(lidar.read(1))
+		#byte_h = ord(lidar.read(1))
+		lidarWriter.writerow([ord(lidar.read(1)), ord(lidar.read(1))])
 
 def imuRead():
+	imuFile = open('/home/pi/datalog/'+timestr+'_IMU'+'.csv', 'w')
+	imuWriter = csv.writer(imuFile)
 	while 1:
 		# tomar valor de INT_STATUS
 		mpuIntStatus = mpu.getIntStatus()
-  
+
 		if mpuIntStatus >= 2: # checar que este listo el interrupt de datos del DMP 
 			# tomar cuenta actual de FIFO
 			fifoCount = mpu.getFIFOCount()
@@ -32,7 +39,7 @@ def imuRead():
 				mpu.resetFIFO()
 				# y = 255
 			
-		   
+		 
 			# esperar para que el paquete de datos sea del tamano correcto
 			fifoCount = mpu.getFIFOCount()
 			while fifoCount < packetSize:
@@ -42,8 +49,8 @@ def imuRead():
 			q = mpu.dmpGetQuaternion(result)
 			g = mpu.dmpGetGravity(q)
 			ypr = mpu.dmpGetYawPitchRoll(q, g)
-			y = ypr['yaw']
-			print y
+			#y = ypr['yaw']
+			imuWriter.writerow([ypr['yaw']])
 			
 			# ver cuenta del FIFO aqui, en caso de tener mas de 1
 			# esto nos permite leer mas sin esperar un interrupt        
@@ -57,6 +64,9 @@ if __name__ == '__main__':
 
 	# get expected DMP packet size for later comparison
 	packetSize = mpu.dmpGetFIFOPacketSize() 
+
+	#variable para tomar la fecha y hora del tiempo del logger
+	timestr = time.strftime("%Y_%m_%d-%H_%M_%S")
 
 	gps = serial.Serial(port='/dev/gps',
 					baudrate=57600,
