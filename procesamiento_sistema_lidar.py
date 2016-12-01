@@ -90,8 +90,8 @@ def lidarData(q):
 
     q.put(cleanDataLIDAR)
 
-    def interpolacion(x, y):
-        return scipy.interpolate.interp1d(x, y)
+def interpolacion(x, y):
+    return scipy.interpolate.interp1d(x, y)
 
 if __name__ == '__main__':
     # crear queues para almacenar listas de datos
@@ -108,4 +108,3 @@ if __name__ == '__main__':
     dataGps = gpsQueue.get()
     dataImu = imuQueue.get()
     dataLidar = lidarQueue.get()
-
