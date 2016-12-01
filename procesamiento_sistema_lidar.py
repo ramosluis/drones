@@ -18,6 +18,9 @@ def gpsData(q):
             if '$GPGGA' in row[1] or '$GPRMC' in row[1]:
                 rawDataGPS.append(row)
 
+    for i in range(len(rawDataGPS)):
+        rawDataGPS[i][1] = rawDataGPS[i][1].strip().split(",")
+
     # cuando acaba, poner la lista en un queue para poder usarla en main
     q.put(rawDataGPS)
 
@@ -25,6 +28,8 @@ def imuData(q):
     dataFileIMU = open('C:\\Users\\luis\\Desktop\\datalog\\2016_11_25-13_12_55_IMU.csv', 'r')
     dataReaderIMU = csv.reader(dataFileIMU,delimiter=',')
     rawDataIMU = []
+    cleanDataIMU = []
+    # llenar una lista con los datos del archivo
     for row in dataReaderIMU:
         if row[1]:
             rawDataIMU.append(row)
@@ -36,7 +41,12 @@ def imuData(q):
         rawDataIMU[i][1][1] = float(rawDataIMU[i][1][1])*180/math.pi
         rawDataIMU[i][1][2] = float(rawDataIMU[i][1][2])*180/math.pi
 
-    q.put(rawDataIMU)
+        # formatear los datos en una lista que sea facil de usar, no listas dentro
+        # de listas, etc.
+        a_list = [rawDataIMU[i][0], rawDataIMU[i][1][0], rawDataIMU[i][1][1], rawDataIMU[i][1][2]]
+        cleanDataIMU.append(a_list)
+
+    q.put(cleanDataIMU)
 
 def lidarData(q):
     dataFileLIDAR = open('C:\\Users\\luis\\Desktop\\datalog\\2016_11_25-13_12_55_LIDAR.csv', 'r')
@@ -45,7 +55,7 @@ def lidarData(q):
 
     for row in dataReaderLIDAR:
         if row:
-            if int(row[1]) < 1:
+            if int(row[1]) < 1: #si la lectura es menor a 1 metro, no sirve
                 pass
             else:
                 rawDataLIDAR.append(row)
@@ -68,6 +78,6 @@ if __name__ == '__main__':
     lidarProcess = Process(target=lidarData, args=(lidarQueue,)).start()
 
     # tomar datos de queues
-    dataGPS = gpsQueue.get()
+    dataGps = gpsQueue.get()
     dataImu = imuQueue.get()
     dataLidar = lidarQueue.get()
