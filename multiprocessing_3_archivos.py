@@ -7,7 +7,9 @@ import math
 import csv
 import pigpio
 
+# definicion de procesos
 def gpsRead():
+	# GPS a puerto USB
 	gps = serial.Serial(port='/dev/gps',
 					baudrate=57600,
 					parity=serial.PARITY_NONE,
@@ -23,13 +25,13 @@ def gpsRead():
 		gpsWriter.writerow([datetime.utcnow(), gps.readline()])
 
 def lidarRead():
+	# LiDAR a puerto Serial
 	lidar = serial.Serial('/dev/ttyAMA0', 
 						baudrate = 115200,
 						bytesize = serial.EIGHTBITS,
 						parity = serial.PARITY_NONE,
 						stopbits = serial.STOPBITS_ONE)
 	# si no se hace esto el lidar no jala a menos que se cierre el programa y se vuelva a correr
-	# because f logic
 	lidar.close()
 	lidar.open()
 
@@ -43,6 +45,7 @@ def lidarRead():
 		lidarWriter.writerow([datetime.utcnow(), ord(lidar.read(1)), ord(lidar.read(1))])
 
 def imuRead():
+	# Arduino en puerto USB
 	imu = serial.Serial('/dev/arduinoUNO', 115200, timeout = 1)
 	imuFile = open('/home/pi/datalog/'+timestamp+'_IMU'+'.csv', 'w')
 	imuWriter = csv.writer(imuFile)
@@ -52,6 +55,7 @@ def imuRead():
 			imuWriter.writerow([datetime.utcnow(), imu.readline()])
 
 def escMotor():
+	# ESC/Motor a GPIO/PWM
 	# objeto para manipular GPIO del Pi
 	pi = pigpio.pi()
 	# inicializar ESC y girar motor
@@ -64,7 +68,8 @@ def escMotor():
 if __name__ == '__main__':
 	#variable para tomar la fecha y hora del tiempo del logger
 	timestamp = time.strftime("%Y_%m_%d-%H_%M_%S")
-
+	
+	# procesos corren hasta que se apague el sistema
 	Process(target=escMotor).start()
 	Process(target=gpsRead).start()
 	Process(target=lidarRead).start()
